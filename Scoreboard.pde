@@ -20,26 +20,40 @@ public class Scoreboard {
   private int cX;
   private int cY;
   private int ltX;
+  private int ltY;
   private int sX;
   private int sY;
+  private final int STAT_LABEL_Y;
+  private final int STAT_Y;
   private color awayColor;
   private color homeColor;
+  private int upperFlareX;
+  private int lowerFlareX;
+  private float flareDisplacement;
+  private PImage flare;
 
   public Scoreboard(String awayTeam, String homeTeam) {
     this.x = width/2 -(560);//tweak
     this.y = 90;//tweak
     this.cX = width/2 - 480;
     this.cY = height - 200;
-    this.ltX = width/2 - 400;
+    this.ltX = width/2 - 214;
+    this.ltY = cY;
     this.sX = width/2 - 400;
     this.sY = 50;
+    this.STAT_Y = ltY + 87;
+    this.STAT_LABEL_Y = ltY+ 27;
+    this.upperFlareX = ltX-20;
+    this.lowerFlareX = ltX+400;
+    this.flareDisplacement = 0;
     black = color(0, 0, 0);
     yellow = color(255, 255, 0);
     darkerYellow = color(188, 188, 0);
+    flare = loadImage("LensFlare.png");
 
     awayTeamColor = JColorChooser.showDialog(null, awayTeam, Color.white);
     awayColor = color(awayTeamColor.getRed(), awayTeamColor.getGreen(), awayTeamColor.getBlue());
-    homeTeamColor = JColorChooser.showDialog(null, homeTeam, Color.red);
+    homeTeamColor = JColorChooser.showDialog(null, homeTeam, new Color(192, 0, 29));
     homeColor = color(homeTeamColor.getRed(), homeTeamColor.getGreen(), homeTeamColor.getBlue());
   }
 
@@ -60,15 +74,18 @@ public class Scoreboard {
     //--I was getting a random undrawn line due to the math, so that's
     //why the for loop is odd. Just accept it.
     for (float i = 0; i<254; i +=6.4) {//tweak
-      stroke(lerpColor(awayColor, black, i/255));
+      stroke(lerpColor(awayColor, black, i/600));
       line(x+116, round(y+7+(i/6.4)), x+378, round(y+7+(i/6.4)));//tweak 
-      stroke(lerpColor(homeColor, black, i/255));
+      stroke(lerpColor(homeColor, black, i/600));
       line(x+474, round(y+7+(i/6.4)), x+734, round(y+7+(i/6.4)));//tweak
     }
     noStroke();
     fill(255);//tweak
     textAlign(LEFT);
+    if (textWidth(awayTeamName)>262)
+      textFont(font18);
     text(awayTeamName, x+118, y+43);//tweak
+    textFont(myFont);
     text(homeTeamName, x+477, y+43);//tweak
     textAlign(CENTER);
     textFont(myFont);
@@ -102,9 +119,9 @@ public class Scoreboard {
     //image(maa, cX+80, cY-24);
     for (float i = 0; i<254; i +=3.82) {
 
-      stroke(lerpColor(awayColor, black, i/255));
+      stroke(lerpColor(awayColor, black, i/600));
       line(cX+160, round(cY+9+(i/3.82)), cX+801, round(cY+9+(i/3.82)));//tweak 
-      stroke(lerpColor(homeColor, black, i/255));
+      stroke(lerpColor(homeColor, black, i/600));
       line(cX+160, round(cY+76+(i/3.82)), cX+801, round(cY+76+(i/3.82)));//tweak
     }
     textFont(font24);
@@ -130,7 +147,7 @@ public class Scoreboard {
 
   public void showPenalty() {
     for (float i = 0; i<254; i +=6.4) {//tweak
-      stroke(lerpColor(yellow, darkerYellow, i/255));
+      stroke(lerpColor(yellow, darkerYellow, i/600));
       line(x+839, round(y+50+(i/6.4)), x+1088, round(y+50+(i/6.4)));//tweak
     }
     //image(ppBar, x+494, y+31, 148, 24);
@@ -199,21 +216,56 @@ public class Scoreboard {
   }
 
   public void showLowerThird(Player player, String team, String type) {
-    image(sg, ltX, cY+58, 800, 124);
-    for (float i = 0; i<=255; i +=3.82) {
-      if (team.equals("HOME"))
-        stroke(lerpColor(homeColor, black, i/255));
-      else stroke(lerpColor(awayColor, black, i/255));
-      line(ltX, cY+(i/3.82), ltX+800, cY+(i/3.82));
+    image(sg, ltX, cY+1, 800, 121);//tweak
+    tint(23, 103);//tweak
+    image(flare, (upperFlareX - 383) + (++flareDisplacement) % 1160, ltY+-27, 231, 57);//tweak
+    noTint();
+    tint( (team.equals("HOME") ? homeColor : awayColor, 251);//tweak
+    image(flare, (lowerFlareX+350) - (flareDisplacement % 1000), ltY+93, 231, 40);//tweak
+    noTint();
+    fill(bg);
+    noStroke();
+    rect(ltX+800, ltY-14, 161, 135);//tweak
+    rect(ltX - 368, ltY-40, 1162, 39);//tweak
+    for (float i = 0; i<=255; i +=2.10) {//tweak
+      stroke(lerpColor( (team.equals("HOME")) ? homeColor : awayColor, 
+      black, i/600), 0);//tweak
+      line(ltX-372, ltY+(i/2.10), ltX+2, ltY+(i/2.10));//tweak
     }
+
+  
+    float iOffset = 5.4;//tweak
+    for (float i = 0; i <= 255; i += iOffset) {
+      stroke(lerpColor( (team.equals("HOME")) ? homeColor : awayColor, 
+      black, i/600), 0);//tweak
+      line(ltX+2, ltY + (i/iOffset), ltX+800, ltY + (i/iOffset));
+    }
+    int whiteOffset = 48;//tweak
+    iOffset = 3.4;//tweak
+    for (float i = 0; i <= 255; i += iOffset) {
+      stroke(lerpColor( (team.equals("HOME")) ? homeColor : awayColor, 
+      black, i/600), 255);//tweak
+      line(ltX+2, ltY + whiteOffset + (i/iOffset), ltX+800, ltY + whiteOffset + (i/iOffset));
+    }
+    noStroke();
+    fill(0, 91);//tweak
+    rect(ltX + 2, ltY + whiteOffset, 799, 75);//tweak
+
+
+
     //image(maa, ltX, cY);
     fill(255);
     textAlign(CENTER, CENTER);
-    textFont(font24);
-
-    //text(player.getNumber(), ltX+70, cY+17);
-    text(player.getName(), ltX+400, cY+34);
-    text(player.getNumber(), ltX+760, cY+34);
+    textFont(myFont);
+    String name = player.getName();
+    if (textWidth(name)>=372)//tweak
+      textFont(font18);
+    if (textWidth(name)>=372)//tweak
+      textFont(font16);
+    if (textWidth(name)>=372)//tweak
+      textFont(font14);
+    text(name, ltX + -184, cY + 28);//tweak
+    text(player.getNumber(), ltX + -184, cY + 80);
 
 
 
@@ -221,72 +273,73 @@ public class Scoreboard {
     textFont(font18);
     if (type.equals("SEASON SUMMARY")) {
       if (!player.getPosition().equals("G")) {
-        text("GP", ltX+120, cY+90);
-        text("G", ltX+240, cY+90);
-        text("A", ltX+360, cY+90);
-        text("PTS", ltX+480, cY+90);
-        text("P", ltX+600, cY+90);
-        text("PIM", ltX+720, cY+90);
+
+        text("GP", ltX + 111, STAT_LABEL_Y);//tweak
+        text("G", ltX + 211, STAT_LABEL_Y);//tweak
+        text("A", ltX + 318, STAT_LABEL_Y);//tweak
+        text("PTS", ltX + 429, STAT_LABEL_Y);//tweak
+        text("P", ltX + 547, STAT_LABEL_Y);//tweak
+        text("PIM", ltX + 660, STAT_LABEL_Y);//tweak
 
         fill(255);
         textFont(myFont);
-        text(player.getGamesPlayed(), ltX+120, cY+146);
-        text(player.getShots().getGoals(), ltX+240, cY+146);
-        text(player.getShots().getAssists(), ltX+360, cY+146);
-        text(player.getShots().getPts(), ltX+480, cY+146);
-        text(player.getPenalty().getPenalties(), ltX+600, cY+146);
-        text(player.getPenalty().getPim(), ltX+720, cY+146);
+        text(player.getGamesPlayed(), ltX+111, STAT_Y);//tweak
+        text(player.getShots().getGoals(), ltX+211, STAT_Y);//tweak
+        text(player.getShots().getAssists(), ltX+318, STAT_Y);//tweak
+        text(player.getShots().getPts(), ltX+429, STAT_Y);//tweak
+        text(player.getPenalty().getPenalties(), ltX+547, STAT_Y);//tweak
+        text(player.getPenalty().getPim(), ltX+660, STAT_Y);//tweak
       }
 
       else {
-        text("GP", ltX+60, cY+90);
-        text("W-L", ltX+180, cY+90);
-        text("SV", ltX+320, cY+90);
-        text("SV PCT", ltX+470, cY+90);
-        text("GA", ltX+620, cY+90);
-        text("GAA", ltX+740, cY+90);
+        text("GP", ltX+64, STAT_LABEL_Y);//tweak
+        text("W-L", ltX+174, STAT_LABEL_Y);//tweak
+        text("SV", ltX+284, STAT_LABEL_Y);//tweak
+        text("SV PCT", ltX+430, STAT_LABEL_Y);//tweak
+        text("GA", ltX+584, STAT_LABEL_Y);//tweak
+        text("GAA", ltX+724, STAT_LABEL_Y);//tweak
 
         fill(255);
         textFont(myFont);
-        text(player.getGamesPlayed(), ltX+60, cY+146);
-        text(player.getGoalie().getWins() +"-"+player.getGoalie().getLosses(), ltX+180, cY+146);
-        text(player.getGoalie().getSaves(), ltX+320, cY+146);
-        text(player.getSavePct(), ltX+470, cY+146);
-        text(player.getGoalie().getGa(), ltX+620, cY+146);
-        text(player.getGoalie().getGaa(), ltX+740, cY+146);
+        text(player.getGamesPlayed(), ltX+64, STAT_Y);//tweak
+        text(player.getGoalie().getWins() +"-"+player.getGoalie().getLosses(), ltX+174, STAT_Y);//tweak
+        text(player.getGoalie().getSaves(), ltX+284, STAT_Y);//tweak
+        text(player.getSavePct(), ltX+430, STAT_Y);//tweak
+        text(player.getGoalie().getGa(), ltX+584, STAT_Y);//tweak
+        text(player.getGoalie().getGaa(), ltX+724, STAT_Y);//tweak
       }
     }
 
     if (type.equals("GAME SUMMARY")) {
       if (!player.getPosition().equals("G")) {
 
-        text("G", ltX+180, cY+90);
-        text("A", ltX+300, cY+90);
-        text("PTS", ltX+420, cY+90);
-        text("P", ltX+540, cY+90);
-        text("PIM", ltX+660, cY+90);
+        text("G", ltX+90, STAT_LABEL_Y);//tweak
+        text("A", ltX+250, STAT_LABEL_Y);//tweak
+        text("PTS", ltX+410, STAT_LABEL_Y);//tweak
+        text("P", ltX+570, STAT_LABEL_Y);//tweak
+        text("PIM", ltX+730, STAT_LABEL_Y);//tweak
 
         fill(255);
         textFont(myFont);
 
-        text(player.getGoalsGame(), ltX+180, cY+146);
-        text(player.getAssistsGame(), ltX+300, cY+146);
-        text(player.getPtsGame(), ltX+420, cY+146);
-        text(player.getPenaltiesGame(), ltX+540, cY+146);
-        text(player.getPimGame(), ltX+660, cY+146);
+        text(player.getGoalsGame(), ltX+90, STAT_Y);//tweak
+        text(player.getAssistsGame(), ltX+250, STAT_Y);//tweak
+        text(player.getPtsGame(), ltX+410, STAT_Y);//tweak
+        text(player.getPenaltiesGame(), ltX+570, STAT_Y);//tweak
+        text(player.getPimGame(), ltX+730, STAT_Y);//tweak
       }
 
       else {
-        text("GA", ltX+200, cY+90);
-        text("SV", ltX+400, cY+90);
-        text("SHOTS", ltX+600, cY+90);
+        text("GA", ltX+200, STAT_LABEL_Y);//tweak
+        text("SV", ltX+400, STAT_LABEL_Y);//tweak
+        text("SHOTS", ltX+600, STAT_LABEL_Y);//tweak
 
 
         fill(255);
         textFont(myFont);
-        text(player.getGa(), ltX+200, cY+146);
-        text(player.getSaves(), ltX+400, cY+146);
-        text(player.getGa() + player.getSaves(), ltX+600, cY+146);
+        text(player.getGa(), ltX+200, STAT_Y);//tweak
+        text(player.getSaves(), ltX+400, STAT_Y);//tweak
+        text(player.getGa() + player.getSaves(), ltX+600, STAT_Y);//tweak
       }
     }
   }

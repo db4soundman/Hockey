@@ -1964,7 +1964,10 @@ public class Scoreboard {
     noStroke();
     fill(255);//tweak
     textAlign(LEFT);
+    if (textWidth(awayTeamName)>262)
+      textFont(font18);
     text(awayTeamName, x+118, y+43);//tweak
+    textFont(myFont);
     text(homeTeamName, x+477, y+43);//tweak
     textAlign(CENTER);
     textFont(myFont);
