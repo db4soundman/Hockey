@@ -1,6 +1,7 @@
 private class ButtonResponder implements ActionListener {
 
   public void actionPerformed(ActionEvent e) {
+    loop();
     if (e.getSource()==nchc) {
       hideGraphics.doClick();
       showStandings = true;

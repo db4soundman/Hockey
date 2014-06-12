@@ -25,6 +25,8 @@ public class Scoreboard {
   private int sY;
   private final int STAT_LABEL_Y;
   private final int STAT_Y;
+  private final int SCORE_BOARD_TEXT_Y;
+  private final int STAT_BAR_LENGTH;
   private color awayColor;
   private color homeColor;
   private int upperFlareX;
@@ -43,6 +45,8 @@ public class Scoreboard {
     this.sY = 50;
     this.STAT_Y = ltY + 87;
     this.STAT_LABEL_Y = ltY+ 27;
+    this.SCORE_BOARD_TEXT_Y = y + 43;
+    this.STAT_BAR_LENGTH = 1112 - 10;// - 10 for buffer
     this.upperFlareX = ltX-20;
     this.lowerFlareX = ltX+400;
     this.flareDisplacement = 0;
@@ -68,36 +72,36 @@ public class Scoreboard {
     else if (period==5)
       clock = "SHOOTOUT";
     else periodStr = "OT";
-    image(sb, x, y, 1112, 54);//tweak
+    image(sb, x, y, STAT_BAR_LENGTH, 54);//tweak
     image(maa, x+34, y+4, 73, 46);//tweak
     textFont(myFont);      
     //--I was getting a random undrawn line due to the math, so that's
     //why the for loop is odd. Just accept it.
     for (float i = 0; i<254; i +=6.4) {//tweak
-      stroke(lerpColor(awayColor, black, i/600));
+      stroke(lerpColor(awayColor, black, i/355));
       line(x+116, round(y+7+(i/6.4)), x+378, round(y+7+(i/6.4)));//tweak 
-      stroke(lerpColor(homeColor, black, i/600));
-      line(x+474, round(y+7+(i/6.4)), x+734, round(y+7+(i/6.4)));//tweak
+      stroke(lerpColor(homeColor, black, i/355));
+      line(x+469, round(y+7+(i/6.4)), x+734, round(y+7+(i/6.4)));//tweak
     }
     noStroke();
     fill(255);//tweak
     textAlign(LEFT);
     if (textWidth(awayTeamName)>262)
       textFont(font18);
-    text(awayTeamName, x+118, y+43);//tweak
+    text(awayTeamName, x+118, SCORE_BOARD_TEXT_Y);//tweak
     textFont(myFont);
-    text(homeTeamName, x+477, y+43);//tweak
+    text(homeTeamName, x+477, SCORE_BOARD_TEXT_Y);//tweak
     textAlign(CENTER);
     textFont(myFont);
-    text(awayTeamScore, x+419, y+43);//tweak
-    text(homeTeamScore, x+775, y+43);//tweak
+    text(awayTeamScore, x+416, SCORE_BOARD_TEXT_Y);//tweak
+    text(homeTeamScore, x+772, SCORE_BOARD_TEXT_Y);//tweak
     fill(0);
     if (!clock.equals("FINAL")&&!clock.equals("SHOOTOUT")) {
-      text(periodStr, x+880, y+43);//tweak
-      text(clock, x+1027, y+43);//tweak
+      text(periodStr, x+880, SCORE_BOARD_TEXT_Y);//tweak
+      text(clock, x+1021, SCORE_BOARD_TEXT_Y);//tweak
     }
     else {
-      text(clock, x+968, y+43);//tweak
+      text(clock, x+968, SCORE_BOARD_TEXT_Y);//tweak
     }
   }
 
@@ -119,9 +123,9 @@ public class Scoreboard {
     //image(maa, cX+80, cY-24);
     for (float i = 0; i<254; i +=3.82) {
 
-      stroke(lerpColor(awayColor, black, i/600));
+      stroke(lerpColor(awayColor, black, i/355));
       line(cX+160, round(cY+9+(i/3.82)), cX+801, round(cY+9+(i/3.82)));//tweak 
-      stroke(lerpColor(homeColor, black, i/600));
+      stroke(lerpColor(homeColor, black, i/355));
       line(cX+160, round(cY+76+(i/3.82)), cX+801, round(cY+76+(i/3.82)));//tweak
     }
     textFont(font24);
@@ -147,7 +151,7 @@ public class Scoreboard {
 
   public void showPenalty() {
     for (float i = 0; i<254; i +=6.4) {//tweak
-      stroke(lerpColor(yellow, darkerYellow, i/600));
+      stroke(lerpColor(yellow, darkerYellow, i/355));
       line(x+839, round(y+50+(i/6.4)), x+1088, round(y+50+(i/6.4)));//tweak
     }
     //image(ppBar, x+494, y+31, 148, 24);
@@ -186,33 +190,31 @@ public class Scoreboard {
   }
 
   public void showSponsorInfo(String sponsorInfo) {
-    image(statBar, x, y-48, 732, 49);//tweak
-    textAlign(LEFT, CENTER);
+    image(statBar, x, y-48, STAT_BAR_LENGTH, 49);//tweak
+    textAlign(CENTER, CENTER);
     fill(255);
-    textFont(font16);
-    if (textWidth(sponsorInfo)>=732)//tweak
-      textFont(font14);
-    if (textWidth(sponsorInfo)>=732)//tweak
+    textFont(font14);
+    if (textWidth(sponsorInfo)>=STAT_BAR_LENGTH)//tweak
       textFont(font12);
-    if (textWidth(sponsorInfo)>=732)//tweak
+    if (textWidth(sponsorInfo)>=STAT_BAR_LENGTH)//tweak
       textFont(font10);
 
-    text(sponsorInfo, x+15, y-22);
+    text(sponsorInfo, x+STAT_BAR_LENGTH/2, y-22);//tweak
   }
 
   public void showStatsBar(String stat) {
-    image(statBar, x+112, y-48, 732, 49);//tweak
+    image(statBar, x+0, y-48, STAT_BAR_LENGTH, 49);//tweak
     fill(255);
     textFont(font16);
-    if (textWidth(stat)>=732)//tweak
+    if (textWidth(stat)>=STAT_BAR_LENGTH)//tweak
       textFont(font14);
-    if (textWidth(stat)>=732)//tweak
+    if (textWidth(stat)>=STAT_BAR_LENGTH)//tweak
       textFont(font12);
-    if (textWidth(stat)>=732)//tweak
+    if (textWidth(stat)>=STAT_BAR_LENGTH)//tweak
       textFont(font10);
 
     textAlign(CENTER, CENTER);
-    text(stat, x+56+422, y-22);//tweak
+    text(stat, x+STAT_BAR_LENGTH/2, y-22);//tweak
   }
 
   public void showLowerThird(Player player, String team, String type) {
@@ -220,38 +222,46 @@ public class Scoreboard {
     tint(23, 103);//tweak
     image(flare, (upperFlareX - 383) + (++flareDisplacement) % 1160, ltY+-27, 231, 57);//tweak
     noTint();
-    tint( (team.equals("HOME") ? homeColor : awayColor, 251);//tweak
-    image(flare, (lowerFlareX+350) - (flareDisplacement % 1000), ltY+93, 231, 40);//tweak
-    noTint();
     fill(bg);
     noStroke();
-    rect(ltX+800, ltY-14, 161, 135);//tweak
+    //rect(ltX+800, ltY-14, 161, 135);//tweak
     rect(ltX - 368, ltY-40, 1162, 39);//tweak
-    for (float i = 0; i<=255; i +=2.10) {//tweak
-      stroke(lerpColor( (team.equals("HOME")) ? homeColor : awayColor, 
-      black, i/600), 0);//tweak
-      line(ltX-372, ltY+(i/2.10), ltX+2, ltY+(i/2.10));//tweak
-    }
 
-  
+
+
     float iOffset = 5.4;//tweak
     for (float i = 0; i <= 255; i += iOffset) {
       stroke(lerpColor( (team.equals("HOME")) ? homeColor : awayColor, 
-      black, i/600), 0);//tweak
+      black, i/355), 0);//tweak
       line(ltX+2, ltY + (i/iOffset), ltX+800, ltY + (i/iOffset));
     }
     int whiteOffset = 48;//tweak
     iOffset = 3.4;//tweak
     for (float i = 0; i <= 255; i += iOffset) {
       stroke(lerpColor( (team.equals("HOME")) ? homeColor : awayColor, 
-      black, i/600), 255);//tweak
+      black, i/355), 255);//tweak
       line(ltX+2, ltY + whiteOffset + (i/iOffset), ltX+800, ltY + whiteOffset + (i/iOffset));
     }
+
     noStroke();
     fill(0, 91);//tweak
     rect(ltX + 2, ltY + whiteOffset, 799, 75);//tweak
 
 
+    //tint( (team.equals("HOME")) ? homeColor : awayColor, 255);//tweak
+    tint(255, 198);//tweak
+    image(flare, (lowerFlareX+350) - (flareDisplacement % 1000), ltY+93, 231, 40);//tweak
+    noTint();
+    
+    fill(bg);
+    noStroke();
+    rect(ltX+800, ltY-14, 161, 135);//tweak
+    //name rectange
+    for (float i = 0; i<=255; i +=2.08) {//tweak
+      stroke(lerpColor( (team.equals("HOME")) ? homeColor : awayColor, 
+      black, i/355));//tweak
+      line(ltX-372, ltY+(i/2.08), ltX+2, ltY+(i/2.08));//tweak
+    }
 
     //image(maa, ltX, cY);
     fill(255);

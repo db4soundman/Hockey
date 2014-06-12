@@ -220,6 +220,7 @@ void draw() {
       c.runClock();
     }
   }
+  
   if (awayPPClock.size()>0) {
     if (awayPPClock.get(0).getMinutes() == 0 && awayPPClock.get(0).getSeconds() < 0
       && awayPPClock.get(0).getTenths() == 0) 
@@ -309,7 +310,8 @@ void draw() {
   awayScore.setText(""+game.getAwayTeamScore());
   homeScore.setText(""+game.getHomeTeamScore());
   clock.setText(game.getPeriod() + "      " + game.getClock().toStringForControl());
-
+  if (!showLowerThird && game.isClockRunning())
+    noLoop();
   //repaint();
   if (game.isClockRunning())
     runClock.setText("Stop Clock");
@@ -317,6 +319,8 @@ void draw() {
   if (showPP)
     showPPClock.setText("Hide");
   else showPPClock.setText("Show");
+  
+
 }
 
 void statsBarSetup() {
